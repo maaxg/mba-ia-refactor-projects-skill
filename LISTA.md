@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** M2 — Projeto 2 validado; commitando (próximo: check-in)
+**CURRENT:** M3 — Projeto 3 validado; commitando. Próximo: M4 (README)
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -42,19 +42,19 @@
 - [x] Fase 3: `src/` MVC criada (config/models/routes/controllers/services/middlewares; sqlite3 promisificado, async/await)
 - [x] Validação: npm install + boot + endpoints (checkout ok/recusado, auth 401, JOIN report, cascata delete, sem vazamento de cartão/chave)
 - [x] `reports/audit-project-2.md` salvo
-- [~] Commit na `main` + push
+- [x] Commit na `main` + push (62bfa52)
 - [~] CHECK-IN com usuário
 
 ## M3 — Projeto 3 (`task-manager-api` · Python/Flask+SQLAlchemy)
-- [ ] Copiar `.claude/skills/refactor-arch/` para o projeto
-- [ ] Fase 1: stack detectada (Python/Flask, Task Manager)
-- [ ] Fase 2: >=5 findings mesmo parcialmente organizado, com file:line
-- [ ] GATE Fase 2->3: confirmação
-- [ ] Fase 3: `src/` MVC (services/utils viram camada real)
-- [ ] Validação: seed + boot + endpoints
-- [ ] `reports/audit-project-3.md` salvo
-- [ ] Commit na `main` + push
-- [ ] CHECK-IN com usuário
+- [x] Copiar `.claude/skills/refactor-arch/` para o projeto
+- [x] Fase 1: stack detectada (Python/Flask 3.0.0 + SQLAlchemy, Task Manager, 15 .py)
+- [x] Fase 2: 17 findings (5 CRITICAL, 5 HIGH, 4 MEDIUM, 3 LOW), com file:line
+- [x] GATE Fase 2->3: confirmado
+- [x] Fase 3: `src/` MVC (config/models/views/controllers/services/utils/middlewares; services/utils viraram camada real e usada)
+- [x] Validação: seed + boot + endpoints (auth admin 401/403/200, N+1→eager/agregado, cascata delete, token assinado, sem 500, sem deprecation)
+- [x] `reports/audit-project-3.md` salvo
+- [~] Commit na `main` + push
+- [~] CHECK-IN com usuário
 
 ## M4 — Finalização
 - [ ] README.md seções A/B/C/D preenchidas
