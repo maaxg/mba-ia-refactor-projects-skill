@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** M1 — Projeto 1 validado; commitando e fazendo check-in
+**CURRENT:** M2 — Projeto 2 validado; commitando (próximo: check-in)
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -31,19 +31,19 @@
 - [x] Fase 3: estrutura `src/` MVC criada (config/models/views/controllers/services/middlewares)
 - [x] Validação: app sobe + 17 endpoints testados (login/hash, transação, JOIN, relatório, admin gated, SQLi neutralizada)
 - [x] `reports/audit-project-1.md` salvo
-- [~] Commit na `main` + push
+- [x] Commit na `main` + push (1a52ab2)
 - [~] CHECK-IN com usuário
 
 ## M2 — Projeto 2 (`ecommerce-api-legacy` · Node/Express)
-- [ ] Copiar `.claude/skills/refactor-arch/` para o projeto
-- [ ] Fase 1: stack detectada (Node/Express, LMS/checkout)
-- [ ] Fase 2: >=5 findings, >=1 CRITICAL/HIGH, com file:line
-- [ ] GATE Fase 2->3: confirmação
-- [ ] Fase 3: `src/` MVC criada
-- [ ] Validação: `npm install` + boot + endpoints
-- [ ] `reports/audit-project-2.md` salvo
-- [ ] Commit na `main` + push
-- [ ] CHECK-IN com usuário
+- [x] Copiar `.claude/skills/refactor-arch/` para o projeto
+- [x] Fase 1: stack detectada (Node/Express 4.x, LMS/checkout, 3 arquivos)
+- [x] Fase 2: 16 findings (5 CRITICAL, 5 HIGH, 3 MEDIUM, 3 LOW), com file:line
+- [x] GATE Fase 2->3: confirmado ("proceed")
+- [x] Fase 3: `src/` MVC criada (config/models/routes/controllers/services/middlewares; sqlite3 promisificado, async/await)
+- [x] Validação: npm install + boot + endpoints (checkout ok/recusado, auth 401, JOIN report, cascata delete, sem vazamento de cartão/chave)
+- [x] `reports/audit-project-2.md` salvo
+- [~] Commit na `main` + push
+- [~] CHECK-IN com usuário
 
 ## M3 — Projeto 3 (`task-manager-api` · Python/Flask+SQLAlchemy)
 - [ ] Copiar `.claude/skills/refactor-arch/` para o projeto
