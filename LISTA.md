@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** CONCLUÍDO — 3 projetos refatorados/validados/commitados + README A–D. Aguardando push final.
+**CURRENT:** ✅ DESAFIO CONCLUÍDO — tudo commitado e pushado na main (último: 2e65791).
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -59,7 +59,7 @@
 ## M4 — Finalização
 - [x] README.md seções A/B/C/D preenchidas (enunciado original preservado abaixo)
 - [x] Checklist de aceite marcado (3/3 projetos)
-- [~] Commit final na `main` + push
+- [x] Commit final na `main` + push (2e65791)
 
 ---
 
