@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** M3 — Projeto 3 validado; commitando. Próximo: M4 (README)
+**CURRENT:** CONCLUÍDO — 3 projetos refatorados/validados/commitados + README A–D. Aguardando push final.
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -53,13 +53,13 @@
 - [x] Fase 3: `src/` MVC (config/models/views/controllers/services/utils/middlewares; services/utils viraram camada real e usada)
 - [x] Validação: seed + boot + endpoints (auth admin 401/403/200, N+1→eager/agregado, cascata delete, token assinado, sem 500, sem deprecation)
 - [x] `reports/audit-project-3.md` salvo
-- [~] Commit na `main` + push
-- [~] CHECK-IN com usuário
+- [x] Commit na `main` + push (5a8682c)
+- [x] CHECK-IN com usuário
 
 ## M4 — Finalização
-- [ ] README.md seções A/B/C/D preenchidas
-- [ ] Checklist de aceite marcado (3/3 projetos)
-- [ ] Commit final na `main` + push
+- [x] README.md seções A/B/C/D preenchidas (enunciado original preservado abaixo)
+- [x] Checklist de aceite marcado (3/3 projetos)
+- [~] Commit final na `main` + push
 
 ---
 
