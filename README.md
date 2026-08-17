@@ -142,8 +142,10 @@ O playbook tem **12 transformações** com exemplos antes/depois em Python e Nod
   report/delete sem token → 401; **cartão/chave nunca aparecem no log**; delete cascateia (revenue → 0).
 - **Projeto 3** — seed (3/4/10); app sobe **sem deprecation warnings**; `/tasks` com `user_name`/
   `category_name` (sem N+1); `/users` sem `password`; `search?priority=abc` → 400; login com hash werkzeug +
-  token assinado; `/reports/summary` → 401 sem token / 403 não-admin / 200 admin; delete de usuário
-  cascateia as tasks (11 → 8).
+  token assinado; **guard de auth em TODO endpoint de escrita** (RP-06): `POST/PUT/DELETE` de `/tasks`
+  e `/categories` → `require_auth` (401 sem token, ok com qualquer token válido); `POST/PUT/DELETE` de
+  `/users` e `GET /reports/summary` → `require_admin` (401 sem token / 403 não-admin / 200 admin);
+  `GET` e `POST /login` públicos; delete de usuário cascateia as tasks (11 → 8).
 
 ### Checklist de Validação (preenchido — 3/3 projetos)
 **Fase 1:** ✅ linguagem · ✅ framework · ✅ domínio · ✅ nº de arquivos.

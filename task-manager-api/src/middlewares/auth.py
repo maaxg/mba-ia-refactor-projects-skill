@@ -1,5 +1,9 @@
-"""Authorization guards. The legacy app enforced no auth on any endpoint despite defining
-User.is_admin(); here admin/destructive routes require a valid signed token with the admin role.
+"""Authentication/authorization guards. The legacy app enforced no auth on any endpoint despite
+defining User.is_admin(); here EVERY write endpoint (POST/PUT/PATCH/DELETE) requires a valid signed
+token. Two guards share one token extractor + verifier so they can't drift:
+
+- require_auth  → any valid token (ordinary content writes: tasks, categories).
+- require_admin → valid token AND role == "admin" (account management, privileged reports).
 """
 from functools import wraps
 
@@ -13,6 +17,19 @@ def _extract_token():
     if header.startswith("Bearer "):
         return header[len("Bearer "):]
     return request.headers.get("X-Auth-Token")
+
+
+def require_auth(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        token = _extract_token()
+        if not token:
+            return jsonify({"error": "Autenticação necessária"}), 401
+        if not verify_token(token):
+            return jsonify({"error": "Token inválido ou expirado"}), 401
+        return fn(*args, **kwargs)
+
+    return wrapper
 
 
 def require_admin(fn):

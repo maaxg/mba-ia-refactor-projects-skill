@@ -70,6 +70,10 @@ components hard-instantiating their dependencies; a single shared connection reu
 **Signals:** create/update/delete/admin/report endpoints with no auth guard; `is_admin()` defined but
 never enforced; predictable "tokens" (`"fake-jwt-token-" + id`).
 **Impact:** anyone can mutate data or read privileged reports.
+**Fix (RP-06):** list **every** write endpoint (`POST`/`PUT`/`PATCH`/`DELETE`) this finding covers and
+guard **all** of them — `require_auth` for ordinary content writes, `require_admin` for account
+management and privileged reports. Guarding only a subset (e.g. just `DELETE /users`) leaves the
+finding partially open and does not resolve it.
 
 ### AP-10 · Non-Atomic Multi-Write (no transaction / no rollback)
 **Signals:** a flow that inserts an order + items + decrements stock (or enroll + payment + audit)

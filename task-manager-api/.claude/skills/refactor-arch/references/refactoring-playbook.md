@@ -98,15 +98,68 @@ Node: use `bcrypt`. Remove the homemade `badCrypto`/base64 "hashing".
 
 ---
 
-## RP-06 · Guard admin/destructive endpoints; remove arbitrary-SQL routes (fixes AP-04, AP-09)
+## RP-06 · Guard EVERY write endpoint; separate authn from authz; remove arbitrary-SQL routes (fixes AP-04, AP-09)
 
-**Before**: `POST /admin/query` runs arbitrary SQL from the body; `DELETE /users/:id` is public.
-**After**:
-- **Remove** the arbitrary-SQL endpoint entirely (document it in the report). There is no safe MVC
-  home for "run any SQL from the internet".
-- Put an `auth` middleware on admin/destructive routes; enforce roles (`require_admin`).
-- Replace predictable `"fake-jwt-token-"+id` with a real signed token (or clearly mark as out-of-scope
-  and gate the route), and never trust client-supplied identity.
+**The rule (do not skip any):** the AP-09 finding lists the endpoints with no auth guard. Guard
+**every one of them** — not just the two most obviously "admin/destructive" ones. Concretely:
+
+1. **Enumerate the write endpoints from the Phase 2 audit.** Every route that mutates state —
+   `POST` / `PUT` / `PATCH` / `DELETE` on *each* resource the finding named (users, tasks,
+   categories, …) — is in scope. If the audit flagged "create/update/delete of users, tasks and
+   categories are public", then **all nine** of those (create/update/delete × 3 resources) must end
+   up guarded, plus any privileged report route.
+2. **Provide two guards, not one:**
+   - `require_auth` — a valid signed token of *any* role. Use for ordinary content writes
+     (create/update/delete a task, a category, etc.).
+   - `require_admin` — a valid token **and** `role == "admin"`. Use for account management
+     (create/update/delete users) and privileged reads (global reports, admin overviews).
+   Reuse a single `_extract_token()` + `verify_token()` so the two decorators don't drift.
+3. **Leave public only what must be public:** `GET` reads (unless the audit said a read is
+   privileged), `POST /login`, and health checks. Everything else that writes → a guard.
+4. **Remove** any arbitrary-SQL endpoint entirely (document it in the report). There is no safe MVC
+   home for "run any SQL from the internet".
+5. Replace predictable `"fake-jwt-token-"+id` with a real signed token, and never trust
+   client-supplied identity.
+
+**Before**: `POST /admin/query` runs arbitrary SQL; `DELETE /users/:id` is public — **and so are**
+`POST/PUT /users`, `POST/PUT/DELETE /tasks`, `POST/PUT/DELETE /categories`.
+
+**After** — one guard module, applied to the *whole* write surface (Flask example):
+```python
+# src/middlewares/auth.py
+def _extract_token():
+    h = request.headers.get("Authorization", "")
+    return h[7:] if h.startswith("Bearer ") else request.headers.get("X-Auth-Token")
+
+def require_auth(fn):            # any valid token
+    @wraps(fn)
+    def w(*a, **k):
+        if not verify_token(_extract_token()):
+            return jsonify({"error": "Autenticação necessária"}), 401
+        return fn(*a, **k)
+    return w
+
+def require_admin(fn):           # valid token + admin role
+    @wraps(fn)
+    def w(*a, **k):
+        p = verify_token(_extract_token())
+        if not p:      return jsonify({"error": "Autenticação necessária"}), 401
+        if p.get("role") != "admin":
+            return jsonify({"error": "Acesso restrito a administradores"}), 403
+        return fn(*a, **k)
+    return w
+```
+```python
+# src/views/task_routes.py — EVERY write wired through a guard
+bp.add_url_rule("/tasks", "create_task", require_auth(c.create_task), methods=["POST"])
+bp.add_url_rule("/tasks/<int:id>", "update_task", require_auth(c.update_task), methods=["PUT"])
+bp.add_url_rule("/tasks/<int:id>", "delete_task", require_auth(c.delete_task), methods=["DELETE"])
+# users → require_admin (account management); reports/summary → require_admin; GET reads stay public
+```
+Node/Express: an `authMiddleware` / `adminMiddleware` pair applied to every mutating route in the
+router. **Self-check before finishing:** re-read the AP-09 finding and confirm each write endpoint it
+named now has a decorator — if any `POST/PUT/PATCH/DELETE` from the finding is still bare, the fix is
+incomplete.
 
 ---
 

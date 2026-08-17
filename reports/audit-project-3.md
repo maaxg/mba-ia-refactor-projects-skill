@@ -62,6 +62,11 @@ Total: 17 findings
 - **Description:** Create/update/delete of users, tasks and categories are fully public.
 - **Impact:** Anyone can mutate or destroy data.
 - **Recommendation:** `require_auth`/`require_admin` middleware; enforce roles. Playbook RP-06.
+- **Resolution (Phase 3):** `require_auth` guard on **all 6** task/category writes (`POST/PUT/DELETE`
+  `/tasks`, `POST/PUT/DELETE /categories`); `require_admin` on **all 3** user writes
+  (`POST/PUT/DELETE /users`) and on `GET /reports/summary`. Every write endpoint named by this
+  finding is now guarded — `GET` reads and `POST /login` stay public. Verified live (401 without a
+  token, 403 for non-admin on admin routes, 200/201 with a valid token).
 
 ### [HIGH] Fake / predictable auth token (AP-09)
 - **File:** `routes/user_routes.py:210`
@@ -130,8 +135,24 @@ runtime) across models, routes and seed. Replace with `db.session.get(...)` and 
 helper respectively.
 
 ## Endpoints preserved / changed in Phase 3
-- **Preserved (same URL/method/response):** `/health`, `/`, `/tasks` (GET/POST), `/tasks/<id>` (GET/PUT/DELETE), `/tasks/search`, `/tasks/stats`, `/users` (GET/POST), `/users/<id>` (GET/PUT), `/users/<id>/tasks`, `/login`, `/reports/user/<id>`, `/categories` (GET/POST), `/categories/<id>` (PUT/DELETE). The `password` field is removed from user payloads (security fix).
-- **Behavior hardened:** `POST /login` now returns a real signed token; `DELETE /users/<id>` and `GET /reports/summary` now require `require_admin` (Authorization token). `api`/validation uses an admin token for those.
+- **Preserved (same URL/method/response):** `/health`, `/`, `/tasks` (GET/POST), `/tasks/<id>` (GET/PUT/DELETE), `/tasks/search`, `/tasks/stats`, `/users` (GET/POST), `/users/<id>` (GET/PUT/DELETE), `/users/<id>/tasks`, `/login`, `/reports/user/<id>`, `/reports/summary`, `/categories` (GET/POST), `/categories/<id>` (PUT/DELETE). The `password` field is removed from user payloads (security fix).
+- **Auth guard (RP-06) — applied to every write endpoint AP-09 flagged, not a subset:**
+
+  | Endpoint | Guard | Unauth | Non-admin |
+  |---|---|---|---|
+  | `POST /tasks`, `PUT /tasks/<id>`, `DELETE /tasks/<id>` | `require_auth` | 401 | ok |
+  | `POST /categories`, `PUT /categories/<id>`, `DELETE /categories/<id>` | `require_auth` | 401 | ok |
+  | `POST /users`, `PUT /users/<id>`, `DELETE /users/<id>` | `require_admin` | 401 | 403 |
+  | `GET /reports/summary` | `require_admin` | 401 | 403 |
+  | `GET` reads, `POST /login`, `/health`, `/` | public | — | — |
+
+  Rationale: ordinary content writes (tasks, categories) require any authenticated user; account
+  management and the global report require an admin (`is_admin()`, previously defined but never
+  enforced, is now enforced).
+- **Behavior hardened:** `POST /login` now returns a real signed token (itsdangerous). Two guards
+  (`require_auth`, `require_admin`) share one `_extract_token()`+`verify_token()` in
+  `middlewares/auth.py`. Validation logs in as admin (`joao@email.com`) and as a plain user
+  (`maria@email.com`) and exercises the full matrix above.
 
 ================================
 Total: 17 findings

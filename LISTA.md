@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** ✅ DESAFIO CONCLUÍDO — tudo commitado e pushado na main (último: 2e65791).
+**CURRENT:** 🔧 RODADA DE CORREÇÃO (feedback do professor) — playbook RP-06 ajustado + skill re-rodada no `task-manager-api`. Validado localmente. Falta commit/push (aguardando o usuário).
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -63,6 +63,23 @@
 
 ---
 
+## M5 — Correção pós-feedback (guard de auth incompleto no `task-manager-api`)
+> Feedback: o relatório marcava como HIGH a falta de auth em POST/PUT/DELETE de users/tasks/categories,
+> mas a Fase 3 só protegeu `DELETE /users` e `GET /reports/summary`. Causa-raiz: RP-06 estava redigido
+> como "guard admin/destructive endpoints" → só cobriu 2 rotas.
+- [x] **Root cause na skill:** reescrito `RP-06` (playbook) → "guard EVERY write endpoint"; separa
+      `require_auth` (escritas comuns) de `require_admin` (contas + relatórios); checklist de auto-verificação.
+- [x] `SKILL.md` Fase 3: passo explícito "auth guard é tudo-ou-nada" + validação que checa 401 em cada escrita.
+- [x] `antipattern-catalog.md` AP-09: nota de Fix apontando p/ guardar TODAS as escritas.
+- [x] Sincronizado nas 3 cópias da skill (code-smells / ecommerce / task-manager) — md5 idêntico.
+- [x] **Re-run no `task-manager-api`:** `middlewares/auth.py` ganhou `require_auth`; guardadas as 6 escritas
+      de tasks/categories (`require_auth`) + as 3 de users e `/reports/summary` (`require_admin`).
+- [x] Validação live (porta 5055): matriz completa passou — 401 sem token, 403 não-admin em rotas admin,
+      200/201 com token; GET/login públicos; token adulterado → 401; sem erros no log; app sobe/encerra limpo.
+- [x] `reports/audit-project-3.md` e `README.md` atualizados com o mapa de guards.
+- [ ] Commit + push na `main` (aguardando o usuário).
+
 ## Log de progresso
 - Exploração inicial dos 3 projetos concluída (stacks, domínios e anti-patterns mapeados).
 - M0 concluído: `reports/` e `LISTA.md` criados.
+- M5 (correção pós-feedback): RP-06 tornado "todo endpoint de escrita"; skill re-rodada e validada no task-manager-api.

@@ -1,4 +1,5 @@
-"""User routes. DELETE /users/<id> is guarded by require_admin (was public)."""
+"""User routes. Account management (create/update/delete users) is admin-only (require_admin) —
+the legacy app left all of it public despite defining User.is_admin(). Reads and /login stay public."""
 from flask import Blueprint
 
 from controllers import user_controller
@@ -7,9 +8,11 @@ from middlewares.auth import require_admin
 user_bp = Blueprint("users", __name__)
 
 user_bp.add_url_rule("/users", "get_users", user_controller.list_users, methods=["GET"])
-user_bp.add_url_rule("/users", "create_user", user_controller.create_user, methods=["POST"])
+user_bp.add_url_rule("/users", "create_user", require_admin(user_controller.create_user), methods=["POST"])
 user_bp.add_url_rule("/users/<int:user_id>", "get_user", user_controller.get_user, methods=["GET"])
-user_bp.add_url_rule("/users/<int:user_id>", "update_user", user_controller.update_user, methods=["PUT"])
+user_bp.add_url_rule(
+    "/users/<int:user_id>", "update_user", require_admin(user_controller.update_user), methods=["PUT"]
+)
 user_bp.add_url_rule(
     "/users/<int:user_id>", "delete_user", require_admin(user_controller.delete_user), methods=["DELETE"]
 )

@@ -114,6 +114,12 @@ Only after explicit confirmation. Load `references/mvc-architecture-guidelines.m
    split God classes into per-domain models and controllers; move business logic out of routes;
    fix crypto/auth; wrap multi-write flows in transactions; fix N+1; replace deprecated APIs;
    centralize error handling; add input validation; replace magic numbers and `print()` logging.
+   - **Auth guard is all-or-nothing (RP-06).** When a finding says authentication/authorization is
+     missing, apply the guard to **every** write endpoint that finding named — each `POST`/`PUT`/
+     `PATCH`/`DELETE` on every listed resource — not just one or two examples. Use `require_auth`
+     for ordinary content writes and `require_admin` for account management and privileged reports;
+     leave only `GET` reads, `/login`, and health checks public. Enumerate the flagged writes from
+     the audit and check each one off.
 3. Keep the HTTP contract identical (same routes/methods/response shapes).
 
 ### Validation (required — Phase 3 is not done without it)
@@ -122,6 +128,10 @@ Only after explicit confirmation. Load `references/mvc-architecture-guidelines.m
 - **Seed** the DB if the project needs it.
 - **Boot** the app (in the background) and confirm it starts without errors.
 - **Exercise** the original endpoints (curl / the project's `.http` file) and confirm real responses.
+- **Verify the auth guard on every flagged write**: call each `POST`/`PUT`/`PATCH`/`DELETE` the
+  AP-09 finding named **without** a token and confirm it returns `401` (and `403` for admin-only
+  routes hit with a non-admin token); then confirm the same call **succeeds** with a valid token.
+  A single unguarded write from that list means Phase 3 is not done.
 - **Re-audit**: mentally (or by re-running Phase 2) confirm the corrected anti-patterns are gone.
 - Shut the app down.
 
