@@ -5,7 +5,7 @@
 
 **Legenda:** `[ ]` pendente · `[~]` em andamento · `[x]` concluído · `[!]` bloqueado
 
-**CURRENT:** 🔧 RODADA DE CORREÇÃO (feedback do professor) — playbook RP-06 ajustado + skill re-rodada no `task-manager-api`. Validado localmente. Falta commit/push (aguardando o usuário).
+**CURRENT:** ✅ RODADA DE CORREÇÃO CONCLUÍDA — playbook RP-06 ajustado + skill re-rodada no `task-manager-api`, validado e commitado/pushado na main (5e81bac).
 
 **Decisões fixadas:** execução um projeto por vez · commits na `main` + push · layout `src/` MVC.
 
@@ -77,7 +77,7 @@
 - [x] Validação live (porta 5055): matriz completa passou — 401 sem token, 403 não-admin em rotas admin,
       200/201 com token; GET/login públicos; token adulterado → 401; sem erros no log; app sobe/encerra limpo.
 - [x] `reports/audit-project-3.md` e `README.md` atualizados com o mapa de guards.
-- [ ] Commit + push na `main` (aguardando o usuário).
+- [x] Commit + push na `main` (5e81bac).
 
 ## Log de progresso
 - Exploração inicial dos 3 projetos concluída (stacks, domínios e anti-patterns mapeados).
